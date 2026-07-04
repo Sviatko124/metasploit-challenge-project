@@ -14,7 +14,7 @@ class MetasploitModule < Msf::Exploit::Remote
       'Author'         => ['Sviatko124'],
       'License'        => MSF_LICENSE,
       'References'     => [
-        ['URL', 'http://github.com/Sviatko124/metasploit-practice-module']
+        ['URL', 'http://github.com/Sviatko124/metasploit-challenge-project']
       ],
       'Platform'       => 'unix',
       'Arch'           => [ARCH_CMD],
