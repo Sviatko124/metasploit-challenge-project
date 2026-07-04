@@ -7,7 +7,7 @@
 #include <string.h>
 
 int main() {
-    char username[20];
+    char username[200];
 
     printf("DateService v1.0.0\n==========\nWhat is your name: ");
     fflush(stdout);
